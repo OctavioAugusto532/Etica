@@ -1,0 +1,260 @@
+<!doctype html>
+
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Show do Milhão — Ética</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#ffd166;--muted:#94a3b8}
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; min-height:100vh; background:linear-gradient(180deg,#071427 0%, #081426 60%); color:#e6eef6; display:flex; align-items:center; justify-content:center; padding:20px}
+    .wrap{width:100%; max-width:980px}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    .logo{background:var(--accent);color:#071427;padding:10px 14px;border-radius:8px;font-weight:700}
+    h1{margin:0;font-size:20px}
+    .layout{display:grid;grid-template-columns:1fr 320px;gap:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); border:1px solid rgba(255,255,255,0.04); padding:18px;border-radius:12px;}
+    .question{font-size:18px;margin-bottom:12px}
+    .options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .opt{padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);cursor:pointer;background:transparent}
+    .opt.disabled{opacity:0.5;cursor:default}
+    .opt.correct{background:linear-gradient(90deg,#134e4a,#10b981); color:#021; border-color:rgba(16,185,129,0.15)}
+    .opt.wrong{background:linear-gradient(90deg,#4c1d1d,#ef4444); color:#210}
+    .controls{display:flex;gap:8px;margin-top:12px;align-items:center}
+    button.btn{background:#0b1220;border:1px solid rgba(255,255,255,0.04);color:var(--accent);padding:8px 10px;border-radius:8px;cursor:pointer}
+    button.btn.secondary{background:transparent;color:var(--muted);border:1px dashed rgba(255,255,255,0.03)}
+    .lifelines{display:flex;gap:8px}
+    .ladder{padding:14px}
+    .ladder h3{margin:0 0 10px 0;font-size:16px}
+    .prize{display:flex;flex-direction:column-reverse;gap:6px}
+    .prize div{padding:8px;border-radius:6px;background:rgba(255,255,255,0.02);display:flex;justify-content:space-between}
+    .prize .active{background:linear-gradient(90deg, rgba(255,209,102,0.15), rgba(255,209,102,0.05));border:1px solid rgba(255,209,102,0.12)}
+    footer{margin-top:12px;color:var(--muted);font-size:13px}
+    .center{display:flex;justify-content:center;align-items:center}
+    @media(max-width:880px){.layout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">MILHÃO</div>
+      <div>
+        <h1>Show do Milhão — Quiz de Ética</h1>
+        <div style="color:var(--muted);font-size:13px">Responda perguntas de ética, avance na escada e alcance o prêmio máximo.</div>
+      </div>
+    </header><div class="layout">
+  <main class="card">
+    <div id="gameArea">
+      <div class="question" id="question">Carregando pergunta...</div>
+      <div class="options" id="options"></div>
+
+      <div class="controls">
+        <div class="lifelines">
+          <button id="fiftyBtn" class="btn">50/50</button>
+          <button id="skipBtn" class="btn">Pular</button>
+          <button id="askBtn" class="btn">Ajuda (público)</button>
+        </div>
+        <div style="flex:1"></div>
+        <button id="stopBtn" class="btn secondary">Parar e sacar</button>
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+        <div id="status" style="color:var(--muted)"></div>
+        <div style="flex:1"></div>
+        <button id="restartBtn" class="btn secondary">Reiniciar</button>
+      </div>
+    </div>
+
+    <footer>
+      Dica: use 50/50 para eliminar duas alternativas; pular para ir à próxima pergunta sem perder o jogo; parar para sacar o valor atual.
+    </footer>
+  </main>
+
+  <aside class="card ladder">
+    <h3>Escada de Prêmios</h3>
+    <div class="prize" id="ladder"></div>
+  </aside>
+</div>
+
+  </div>  <script>
+    // Perguntas sobre ética em português (pode adicionar/editar)
+    const questions = [
+      {q: 'O que é ética?', opts: ['Conjunto de regras legais', 'Estudo dos valores e condutas humanas', 'Crença religiosa', 'Normas de etiqueta social'], a:1},
+      {q: 'Qual termo descreve agir corretamente mesmo quando ninguém observa?', opts: ['Integridade', 'Oportunismo', 'Relativismo', 'Conformismo'], a:0},
+      {q: 'O que é conflito de interesse?', opts: ['Quando opiniões divergem', 'Interferência entre interesses pessoais e profissionais', 'Um tipo de discriminação', 'Uma teoria moral'], a:1},
+      {q: 'Qual é a principal função de um código de ética em uma organização?', opts: ['Punir funcionários', 'Orientar decisões e condutas', 'Aumentar custos', 'Substituir leis'], a:1},
+      {q: 'Consentimento informado é importante porque:', opts: ['Protege a autonomia do indivíduo', 'Reduz custos', 'Facilita propaganda', 'Aumenta produtividade'], a:0},
+      {q: 'O que significa anonimato em pesquisa ética?', opts: ['Pesquisador desconhece a existência dos participantes', 'Identidade dos participantes não pode ser ligada às respostas', 'Participantes não recebem pagamento', 'Resultados são secretos'], a:1},
+      {q: 'Plágio é considerado antiético porque:', opts: ['É uma forma de crítica', 'Rouba crédito intelectual de outro', 'Ajuda a divulgar ideias', 'É permitido em trabalhos informais'], a:1},
+      {q: 'Em ética utilitarista, uma ação é correta quando:', opts: ['Segue regras universais', 'Maximiza o bem-estar para o maior número', 'Satisfaça o indivíduo mais poderoso', 'É tradicionalmente aceita'], a:1},
+      {q: 'O que é discriminação institucional?', opts: ['Atitude individual de preconceito', 'Políticas organizacionais que desfavorecem grupos', 'Tipo de crime violento', 'Efeito colateral de regulamentações'], a:1},
+      {q: 'Privacidade de dados refere-se a:', opts: ['Dados guardados pelo governo apenas', 'Controle sobre informações pessoais', 'Dados públicos sem restrição', 'Compartilhamento obrigatório entre empresas'], a:1},
+      {q: 'O princípio da beneficência exige:', opts: ['Causar dano para aprendizado', 'Promover o bem e prevenir danos', 'Neutralidade total', 'Subordiná-lo ao lucro'], a:1},
+      {q: 'Correto reporte de irregularidades (whistleblowing) costuma ser:', opts: ['Punível sempre', 'Um mecanismo para transparência', 'Ilegal', 'Sem impacto prático'], a:1}
+    ];
+
+    const prizes = [
+      'R$ 1.000', 'R$ 2.000', 'R$ 5.000', 'R$ 10.000', 'R$ 20.000', 'R$ 40.000', 'R$ 80.000', 'R$ 160.000', 'R$ 320.000', 'R$ 640.000', 'R$ 1.000.000'
+    ];
+
+    // Estado do jogo
+    let idx = 0; // pergunta atual
+    let usedFifty = false;
+    let usedSkip = false;
+    let usedAsk = false;
+    let locked = false; // evita clicar enquanto roda animação
+    let currentWinnings = 'R$ 0';
+
+    // Elementos
+    const qEl = document.getElementById('question');
+    const optsEl = document.getElementById('options');
+    const statusEl = document.getElementById('status');
+    const ladderEl = document.getElementById('ladder');
+    const fiftyBtn = document.getElementById('fiftyBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    const askBtn = document.getElementById('askBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+    function init(){
+      idx = 0; usedFifty=false; usedSkip=false; usedAsk=false; locked=false; currentWinnings='R$ 0';
+      renderLadder();
+      renderQuestion();
+      updateStatus('Boa sorte!');
+      fiftyBtn.disabled = false; skipBtn.disabled = false; askBtn.disabled = false;
+      fiftyBtn.textContent = '50/50'; skipBtn.textContent = 'Pular'; askBtn.textContent = 'Ajuda (público)';
+    }
+
+    function renderLadder(){
+      ladderEl.innerHTML = '';
+      // Mostrar de baixo pra cima
+      for(let i=prizes.length-1;i>=0;i--){
+        const el = document.createElement('div');
+        el.textContent = `${i+1}. ${prizes[i]}`;
+        if(i === idx-1) el.classList.add('active');
+        ladderEl.appendChild(el);
+      }
+    }
+
+    function renderQuestion(){
+      locked = false;
+      renderLadder();
+      const p = questions[idx];
+      if(!p){
+        winGame();
+        return;
+      }
+      qEl.textContent = `Pergunta ${idx+1}: ${p.q}`;
+      optsEl.innerHTML = '';
+      p.opts.forEach((text,i)=>{
+        const b = document.createElement('button');
+        b.className = 'opt';
+        b.dataset.index = i;
+        b.innerHTML = `<strong>${String.fromCharCode(65+i)}</strong>. <span>${text}</span>`;
+        b.addEventListener('click', onAnswer);
+        optsEl.appendChild(b);
+      });
+    }
+
+    function onAnswer(e){
+      if(locked) return; locked = true;
+      const btn = e.currentTarget;
+      if(btn.classList.contains('disabled')){ locked=false; return; }
+      const chosen = parseInt(btn.dataset.index);
+      const correct = questions[idx].a;
+      if(chosen === correct){
+        btn.classList.add('correct');
+        currentWinnings = prizes[Math.min(idx, prizes.length-1)];
+        updateStatus(`Correto! Você ganhou ${currentWinnings}`);
+        setTimeout(()=>{ idx++; renderQuestion(); locked=false; }, 900);
+      } else {
+        btn.classList.add('wrong');
+        // mostrar qual era a correta
+        const children = Array.from(optsEl.children);
+        const correctBtn = children.find(c=>parseInt(c.dataset.index)===correct);
+        if(correctBtn) correctBtn.classList.add('correct');
+        updateStatus('Resposta errada. Fim de jogo.');
+        // jogo termina — definir prêmio mínimo (ex.: R$ 0 ou garantia)
+        currentWinnings = garantia(idx);
+        endGame(false);
+      }
+    }
+
+    function garantia(i){
+      // exemplo: se passou da 5ª pergunta garante R$ 10.000 (índice 3)
+      if(i>=5) return prizes[4];
+      return 'R$ 0';
+    }
+
+    function endGame(won){
+      locked = true;
+      renderLadder();
+      statusEl.innerHTML = won ? `Parabéns! Você ganhou ${currentWinnings}` : `Você saiu com ${currentWinnings}`;
+      // desabilita opções
+      Array.from(optsEl.children).forEach(c=>{ c.classList.add('disabled'); c.disabled=true; });
+    }
+
+    function winGame(){
+      currentWinnings = prizes[prizes.length-1];
+      updateStatus(`Parabéns! Você conquistou o prêmio máximo: ${currentWinnings}`);
+      endGame(true);
+    }
+
+    function updateStatus(txt){ statusEl.textContent = txt; }
+
+    // Lifelines
+    fiftyBtn.addEventListener('click', ()=>{
+      if(usedFifty) return; usedFifty=true; fiftyBtn.disabled=true; fiftyBtn.textContent='Usado';
+      // remove duas alternativas erradas
+      const correct = questions[idx].a;
+      const children = Array.from(optsEl.children).filter(c=>!c.classList.contains('disabled'));
+      const wrongs = children.filter(c=>parseInt(c.dataset.index)!==correct);
+      // escolher aleatoriamente dois para remover (se houver)
+      shuffleArray(wrongs);
+      for(let i=0;i<Math.min(2,wrongs.length);i++){
+        const c = wrongs[i]; c.classList.add('disabled'); c.disabled=true; c.style.opacity=0.5;
+      }
+    });
+
+    skipBtn.addEventListener('click', ()=>{
+      if(usedSkip) return; usedSkip=true; skipBtn.disabled=true; skipBtn.textContent='Usado';
+      updateStatus('Pergunta pulada. Vá para a próxima.');
+      idx++; setTimeout(()=>{ renderQuestion(); }, 400);
+    });
+
+    askBtn.addEventListener('click', ()=>{
+      if(usedAsk) return; usedAsk=true; askBtn.disabled=true; askBtn.textContent='Usado';
+      // simula porcentagens do público
+      const correct = questions[idx].a;
+      const children = Array.from(optsEl.children);
+      const base = [10,10,10,10];
+      base[correct] += 50; // tendênca a favorecer a correta
+      // distribuir pequenas variações
+      for(let i=0;i<4;i++) base[i] += Math.floor(Math.random()*10);
+      const total = base.reduce((s,x)=>s+x,0);
+      const perc = base.map(x=>Math.round(x/total*100));
+      // mostra tooltip simples adicionando texto nas opções
+      children.forEach((c,i)=>{
+        const span = document.createElement('div'); span.style.fontSize='12px'; span.style.color='var(--muted)'; span.textContent = `Público: ${perc[i]}%`;
+        c.appendChild(span);
+      });
+      updateStatus('Resultado da ajuda do público mostrado abaixo das opções.');
+    });
+
+    stopBtn.addEventListener('click', ()=>{
+      // jogador decide parar e sacar
+      currentWinnings = garantia(idx-1) === 'R$ 0' ? (idx>0 ? prizes[idx-1] : 'R$ 0') : garantia(idx-1);
+      updateStatus(`Você parou e sacou ${currentWinnings}`);
+      endGame(false);
+    });
+
+    restartBtn.addEventListener('click', ()=>{ init(); });
+
+    // util
+    function shuffleArray(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } }
+
+    // iniciar
+    init();
+  </script></body>
+</html>
