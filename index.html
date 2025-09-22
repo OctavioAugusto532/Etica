@@ -94,6 +94,28 @@
     }
     footer { margin-top: 12px; color: var(--muted); font-size: 13px; }
     @media(max-width:880px){.layout{grid-template-columns:1fr}}
+
+    /* Telas de fim */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 1000;
+      text-align: center;
+      padding: 20px;
+    }
+    .overlay h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    .overlay p {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
@@ -141,26 +163,34 @@
     </div>
   </div>
 
+  <!-- Overlays -->
+  <div id="victoryScreen" class="overlay">
+    <h2>🎉 Você é o campeão!</h2>
+    <p id="victoryMsg"></p>
+    <button class="btn" onclick="init()">Jogar novamente</button>
+  </div>
+
+  <div id="defeatScreen" class="overlay">
+    <h2>😢 Fim de jogo!</h2>
+    <p id="defeatMsg"></p>
+    <button class="btn" onclick="init()">Tentar de novo</button>
+  </div>
+
   <script>
     const questions = [
-      // as 5 do texto
-      {q: 'Segundo o texto, a ética pode ser entendida como:', opts: ['Conjunto de leis jurídicas que regulam a sociedade.', 'Regras de convivência fixas e imutáveis.', 'Um ramo da filosofia que orienta as ações humanas em busca do bem comum.', 'Tradições e costumes específicos de cada cultura.'], a:2},
-      {q: 'Durante a explicação foi apresentada a diferença entre ética e moral. Qual alternativa traduz corretamente essa diferença?', opts: ['A moral é universal, e a ética varia conforme a sociedade.', 'A ética reflete criticamente sobre os costumes, enquanto a moral se refere às práticas e normas sociais.', 'A ética é prática, enquanto a moral é apenas teoria.', 'Ética e moral são sinônimos, sem distinção.'], a:1},
-      {q: 'De acordo com o texto, em quais áreas a ética é considerada essencial para garantir respeito, justiça e integridade?', opts: ['Medicina, jornalismo e direito.', 'História, filosofia e literatura.', 'Economia, engenharia e matemática.', 'Religião, arte e música.'], a:0},
-      {q: 'No exemplo da carteira perdida, o texto mostra que:', opts: ['A ética orienta a devolver a carteira, preservando a dignidade do outro.', 'A moral sempre leva as pessoas a devolverem a carteira.', 'A ética e a moral são iguais, logo qualquer decisão é correta.', 'A ética não interfere em escolhas do cotidiano.'], a:0},
-      {q: 'Segundo a conclusão do texto, qual é a relação entre escolhas cotidianas e a prática da ética?', opts: ['Cada escolha é irrelevante para a construção social.', 'As escolhas diárias mostram que a ética só vale em grandes decisões.', 'Cada escolha representa uma oportunidade de praticar a ética e construir uma sociedade mais justa.', 'As escolhas individuais não têm impacto na coletividade.'], a:2},
-
-      // +5 novas
-      {q: 'Qual a principal função da ética no convívio social?', opts: ['Evitar punições legais.', 'Guiar as ações humanas para uma convivência justa e respeitosa.', 'Garantir vantagens pessoais.', 'Impedir mudanças culturais.'], a:1},
-      {q: 'Por que a moral pode variar de cultura para cultura?', opts: ['Porque se baseia em costumes e tradições específicos de cada sociedade.', 'Porque é sempre universal.', 'Porque depende apenas da religião dominante.', 'Porque segue regras fixas e imutáveis.'], a:0},
-      {q: 'Segundo o texto, a ética nas profissões como medicina e jornalismo serve para:', opts: ['Substituir leis e regulamentos.', 'Aumentar a competição entre profissionais.', 'Estabelecer princípios que garantam integridade e respeito.', 'Definir salários e benefícios.'], a:2},
-      {q: 'No exemplo da carteira perdida, o que representa a escolha de devolver a carteira?', opts: ['Uma ação orientada por princípios éticos de justiça e responsabilidade.', 'Um ato de moralidade sem reflexão.', 'Um costume que varia entre culturas.', 'Uma obrigação legal imposta.'], a:0},
-      {q: 'De acordo com a conclusão, qual é o papel da consciência nas decisões éticas?', opts: ['É irrelevante, pois as regras já determinam tudo.', 'É central, pois ajuda a refletir e assumir responsabilidade pelas escolhas.', 'É apenas teórica, sem impacto na prática.', 'É usada apenas em situações de emergência.'], a:1},
+      {q:'Segundo o texto, a ética pode ser entendida como:',opts:['Conjunto de leis jurídicas que regulam a sociedade.','Regras de convivência fixas e imutáveis.','Um ramo da filosofia que orienta as ações humanas em busca do bem comum.','Tradições e costumes específicos de cada cultura.'],a:2},
+      {q:'Durante a explicação foi apresentada a diferença entre ética e moral. Qual alternativa traduz corretamente essa diferença?',opts:['A moral é universal, e a ética varia conforme a sociedade.','A ética reflete criticamente sobre os costumes, enquanto a moral se refere às práticas e normas sociais.','A ética é prática, enquanto a moral é apenas teoria.','Ética e moral são sinônimos, sem distinção.'],a:1},
+      {q:'De acordo com o texto, em quais áreas a ética é considerada essencial para garantir respeito, justiça e integridade?',opts:['Medicina, jornalismo e direito.','História, filosofia e literatura.','Economia, engenharia e matemática.','Religião, arte e música.'],a:0},
+      {q:'No exemplo da carteira perdida, o texto mostra que:',opts:['A ética orienta a devolver a carteira, preservando a dignidade do outro.','A moral sempre leva as pessoas a devolverem a carteira.','A ética e a moral são iguais, logo qualquer decisão é correta.','A ética não interfere em escolhas do cotidiano.'],a:0},
+      {q:'Segundo a conclusão do texto, qual é a relação entre escolhas cotidianas e a prática da ética?',opts:['Cada escolha é irrelevante para a construção social.','As escolhas diárias mostram que a ética só vale em grandes decisões.','Cada escolha representa uma oportunidade de praticar a ética e construir uma sociedade mais justa.','As escolhas individuais não têm impacto na coletividade.'],a:2},
+      {q:'Qual a principal função da ética no convívio social?',opts:['Evitar punições legais.','Guiar as ações humanas para uma convivência justa e respeitosa.','Garantir vantagens pessoais.','Impedir mudanças culturais.'],a:1},
+      {q:'Por que a moral pode variar de cultura para cultura?',opts:['Porque se baseia em costumes e tradições específicos de cada sociedade.','Porque é sempre universal.','Porque depende apenas da religião dominante.','Porque segue regras fixas e imutáveis.'],a:0},
+      {q:'Segundo o texto, a ética nas profissões como medicina e jornalismo serve para:',opts:['Substituir leis e regulamentos.','Aumentar a competição entre profissionais.','Estabelecer princípios que garantam integridade e respeito.','Definir salários e benefícios.'],a:2},
+      {q:'No exemplo da carteira perdida, o que representa a escolha de devolver a carteira?',opts:['Uma ação orientada por princípios éticos de justiça e responsabilidade.','Um ato de moralidade sem reflexão.','Um costume que varia entre culturas.','Uma obrigação legal imposta.'],a:0},
+      {q:'De acordo com a conclusão, qual é o papel da consciência nas decisões éticas?',opts:['É irrelevante, pois as regras já determinam tudo.','É central, pois ajuda a refletir e assumir responsabilidade pelas escolhas.','É apenas teórica, sem impacto na prática.','É usada apenas em situações de emergência.'],a:1},
     ];
 
-    const prizes = [
-      'R$ 1.000', 'R$ 2.000', 'R$ 5.000', 'R$ 10.000', 'R$ 20.000', 'R$ 40.000', 'R$ 80.000', 'R$ 160.000', 'R$ 320.000', 'R$ 1.000.000'
-    ];
+    const prizes = ['R$ 1.000','R$ 2.000','R$ 5.000','R$ 10.000','R$ 20.000','R$ 40.000','R$ 80.000','R$ 160.000','R$ 320.000','R$ 1.000.000'];
 
     let idx = 0;
     let usedFifty = false;
@@ -178,6 +208,10 @@
     const askBtn = document.getElementById('askBtn');
     const stopBtn = document.getElementById('stopBtn');
     const restartBtn = document.getElementById('restartBtn');
+    const victoryScreen = document.getElementById('victoryScreen');
+    const defeatScreen = document.getElementById('defeatScreen');
+    const victoryMsg = document.getElementById('victoryMsg');
+    const defeatMsg = document.getElementById('defeatMsg');
 
     function init(){
       idx = 0; usedFifty=false; usedSkip=false; usedAsk=false; locked=false; currentWinnings='R$ 0';
@@ -186,6 +220,8 @@
       updateStatus('Boa sorte!');
       fiftyBtn.disabled = false; skipBtn.disabled = false; askBtn.disabled = false;
       fiftyBtn.textContent = '50/50'; skipBtn.textContent = 'Pular'; askBtn.textContent = 'Ajuda (público)';
+      victoryScreen.style.display = 'none';
+      defeatScreen.style.display = 'none';
     }
 
     function renderLadder(){
@@ -233,7 +269,7 @@
         if(correctBtn) correctBtn.classList.add('correct');
         updateStatus('Resposta errada. Fim de jogo.');
         currentWinnings = garantia(idx);
-        endGame(false);
+        showDefeat();
       }
     }
 
@@ -242,17 +278,20 @@
       return 'R$ 0';
     }
 
-    function endGame(won){
-      locked = true;
-      renderLadder();
-      statusEl.textContent = won ? `Parabéns! Você ganhou ${currentWinnings}` : `Você saiu com ${currentWinnings}`;
-      Array.from(optsEl.children).forEach(c=>{ c.classList.add('disabled'); c.disabled=true; });
+    function showDefeat(){
+      defeatMsg.textContent = `Você saiu com ${currentWinnings}`;
+      defeatScreen.style.display = 'flex';
+    }
+
+    function showVictory(){
+      victoryMsg.textContent = `Prêmio máximo conquistado: ${currentWinnings}`;
+      victoryScreen.style.display = 'flex';
     }
 
     function winGame(){
       currentWinnings = prizes[prizes.length-1];
       updateStatus(`Parabéns! Você conquistou o prêmio máximo: ${currentWinnings}`);
-      endGame(true);
+      showVictory();
     }
 
     function updateStatus(txt){ statusEl.textContent = txt; }
@@ -296,7 +335,7 @@
     stopBtn.addEventListener('click', ()=>{
       currentWinnings = garantia(idx-1) === 'R$ 0' ? (idx>0 ? prizes[idx-1] : 'R$ 0') : garantia(idx-1);
       updateStatus(`Você parou e sacou ${currentWinnings}`);
-      endGame(false);
+      showDefeat();
     });
 
     restartBtn.addEventListener('click', ()=>{ init(); });
