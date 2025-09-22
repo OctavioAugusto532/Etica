@@ -1,38 +1,98 @@
 <!doctype html>
-
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Show do Milhão — Ética</title>
   <style>
-    :root{--bg:#f8fafc;--card:#ffffff;--accent:#2563eb;--muted:#475569}
-    *{box-sizing:border-box}
-    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; min-height:100vh; background:linear-gradient(180deg,#e2e8f0 0%, #f8fafc 60%); color:#1e293b; display:flex; align-items:center; justify-content:center; padding:20px}
-    .wrap{width:100%; max-width:980px}
-    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
-    .logo{background:var(--accent);color:#fff;padding:10px 14px;border-radius:8px;font-weight:700}
-    h1{margin:0;font-size:20px}
-    .layout{display:grid;grid-template-columns:1fr 320px;gap:18px}
-    .card{background:var(--card); border:1px solid #e2e8f0; padding:18px;border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.05)}
-    .question{font-size:18px;margin-bottom:12px}
-    .options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .opt{padding:12px;border-radius:8px;border:1px solid #cbd5e1;cursor:pointer;background:#f1f5f9;transition:all .3s ease}
-    .opt.disabled{opacity:0.5;cursor:default}
-    .opt.correct{background:linear-gradient(90deg,#d1fae5,#10b981); color:#064e3b; border-color:#10b981}
-    .opt.wrong{background:linear-gradient(90deg,#fee2e2,#ef4444); color:#7f1d1d; border-color:#ef4444}
-    .controls{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap}
-    button.btn{background:#f1f5f9;border:1px solid #cbd5e1;color:var(--accent);padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .3s}
-    button.btn:hover:not(:disabled){background:#e0f2fe}
-    button.btn:disabled{opacity:0.5;cursor:default}
-    button.btn.secondary{background:transparent;color:var(--muted);border:1px dashed #cbd5e1}
-    .lifelines{display:flex;gap:8px}
-    .ladder{padding:14px}
-    .ladder h3{margin:0 0 10px 0;font-size:16px}
-    .prize{display:flex;flex-direction:column-reverse;gap:6px}
-    .prize div{padding:8px;border-radius:6px;background:#f1f5f9;display:flex;justify-content:space-between;border:1px solid #e2e8f0}
-    .prize .active{background:linear-gradient(90deg,#bfdbfe,#dbeafe);border:1px solid var(--accent);font-weight:600;color:var(--accent)}
-    footer{margin-top:12px;color:var(--muted);font-size:13px}
+    :root {
+      --bg: #f7f9fc;
+      --card: #ffffff;
+      --accent: #2563eb;
+      --muted: #475569;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg,#e8f0ff 0%, #f9fbff 60%);
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .wrap { width: 100%; max-width: 980px; }
+    header { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+    .logo {
+      background: var(--accent);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+    h1 { margin: 0; font-size: 20px; }
+    .layout { display: grid; grid-template-columns: 1fr 320px; gap: 18px; }
+    .card {
+      background: var(--card);
+      border: 1px solid #e2e8f0;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .question { font-size: 18px; margin-bottom: 12px; }
+    .options { display: grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .opt {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      cursor: pointer;
+      background: #f8fafc;
+      transition: all .3s ease;
+      text-align: left;
+    }
+    .opt:hover:not(.disabled) { background: #e2e8f0; }
+    .opt.disabled { opacity: 0.5; cursor: default; }
+    .opt.correct { background: #bbf7d0; border-color: #22c55e; color: #065f46; }
+    .opt.wrong { background: #fecaca; border-color: #ef4444; color: #7f1d1d; }
+    .controls { display: flex; gap: 8px; margin-top: 12px; align-items: center; flex-wrap: wrap; }
+    button.btn {
+      background: var(--accent);
+      border: none;
+      color: white;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .3s;
+      font-size: 14px;
+    }
+    button.btn:hover:not(:disabled) { background: #1d4ed8; }
+    button.btn:disabled { opacity: 0.5; cursor: default; }
+    button.btn.secondary {
+      background: #f1f5f9;
+      color: var(--muted);
+      border: 1px solid #cbd5e1;
+    }
+    .lifelines { display: flex; gap: 8px; }
+    .ladder { padding: 14px; }
+    .ladder h3 { margin: 0 0 10px 0; font-size: 16px; }
+    .prize { display: flex; flex-direction: column-reverse; gap: 6px; }
+    .prize div {
+      padding: 8px;
+      border-radius: 6px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+    }
+    .prize .active {
+      background: #dbeafe;
+      border: 1px solid #60a5fa;
+      font-weight: bold;
+      color: #1e40af;
+    }
+    footer { margin-top: 12px; color: var(--muted); font-size: 13px; }
     @media(max-width:880px){.layout{grid-template-columns:1fr}}
   </style>
 </head>
@@ -44,56 +104,62 @@
         <h1>Show do Milhão — Quiz de Ética</h1>
         <div style="color:var(--muted);font-size:13px">Responda perguntas de ética, avance na escada e alcance o prêmio máximo.</div>
       </div>
-    </header><div class="layout">
-  <main class="card">
-    <div id="gameArea">
-      <div class="question" id="question">Carregando pergunta...</div>
-      <div class="options" id="options"></div>
+    </header>
 
-      <div class="controls">
-        <div class="lifelines">
-          <button id="fiftyBtn" class="btn">50/50</button>
-          <button id="skipBtn" class="btn">Pular</button>
-          <button id="askBtn" class="btn">Ajuda (público)</button>
+    <div class="layout">
+      <main class="card">
+        <div id="gameArea">
+          <div class="question" id="question">Carregando pergunta...</div>
+          <div class="options" id="options"></div>
+
+          <div class="controls">
+            <div class="lifelines">
+              <button id="fiftyBtn" class="btn">50/50</button>
+              <button id="skipBtn" class="btn">Pular</button>
+              <button id="askBtn" class="btn">Ajuda (público)</button>
+            </div>
+            <div style="flex:1"></div>
+            <button id="stopBtn" class="btn secondary">Parar e sacar</button>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+            <div id="status" style="color:var(--muted)"></div>
+            <div style="flex:1"></div>
+            <button id="restartBtn" class="btn secondary">Reiniciar</button>
+          </div>
         </div>
-        <div style="flex:1"></div>
-        <button id="stopBtn" class="btn secondary">Parar e sacar</button>
-      </div>
 
-      <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-        <div id="status" style="color:var(--muted)"></div>
-        <div style="flex:1"></div>
-        <button id="restartBtn" class="btn secondary">Reiniciar</button>
-      </div>
+        <footer>
+          Dica: use 50/50 para eliminar duas alternativas; pular para ir à próxima pergunta; parar para sacar o valor atual.
+        </footer>
+      </main>
+
+      <aside class="card ladder">
+        <h3>Escada de Prêmios</h3>
+        <div class="prize" id="ladder"></div>
+      </aside>
     </div>
+  </div>
 
-    <footer>
-      Dica: use 50/50 para eliminar duas alternativas; pular para ir à próxima pergunta; parar para sacar o valor atual.
-    </footer>
-  </main>
-
-  <aside class="card ladder">
-    <h3>Escada de Prêmios</h3>
-    <div class="prize" id="ladder"></div>
-  </aside>
-</div>
-
-  </div>  <script>
+  <script>
     const questions = [
-      {q: 'Segundo a fala da Pessoa 1, o que é ética?', opts: ['Um conjunto de regras fixas', 'Um guia de reflexão sobre o certo e o errado', 'Uma lei universal imutável', 'Apenas costumes de uma sociedade'], a:1},
-      {q: 'Na fala da Pessoa 2, qual a diferença entre ética e moral?', opts: ['Ética é universal, moral varia entre culturas', 'Moral é reflexão crítica, ética são costumes', 'Não há diferença', 'Ética depende apenas de religião'], a:0},
-      {q: 'De acordo com a Pessoa 3, por que a ética é fundamental?', opts: ['Ajuda a aumentar lucros', 'Facilita a vida social sem reflexão', 'Orienta decisões responsáveis em várias áreas', 'Serve só para regras de etiqueta'], a:2},
-      {q: 'Na fala da Pessoa 4, qual seria a atitude ética diante de uma carteira perdida?', opts: ['Ficar com o dinheiro', 'Ignorar e deixar no chão', 'Devolver ao dono', 'Jogar fora os documentos'], a:2},
-      {q: 'Na conclusão da Pessoa 5, seguir princípios éticos significa:', opts: ['Cumprir apenas leis externas', 'Agir com reflexão e responsabilidade', 'Seguir costumes sem questionar', 'Evitar sempre ajudar os outros'], a:1},
-      {q: 'O que a ética busca, segundo a introdução?', opts: ['Refletir sobre certo e errado para orientar ações', 'Controlar costumes de sociedades', 'Definir normas religiosas', 'Aumentar a produtividade'], a:0},
-      {q: 'Segundo a explicação, a moral:', opts: ['É igual em todas as culturas', 'Pode variar de sociedade para sociedade', 'É sempre mais importante que a ética', 'Não influencia nossas ações'], a:1},
-      {q: 'Na área da saúde, jornalismo ou direito, a ética garante:', opts: ['Mais lucro e produtividade', 'Respeito, justiça e integridade', 'Apenas cumprimento de leis', 'Normas iguais para todas culturas'], a:1},
-      {q: 'O exemplo da carteira perdida mostra que:', opts: ['A moral sempre leva a devolver', 'A ética nos faz refletir pelo que é justo', 'Cada pessoa decide sem critério', 'O correto é ficar com o dinheiro'], a:1},
-      {q: 'Na fala final, cada escolha do dia a dia é:', opts: ['Uma oportunidade de praticar a ética', 'Algo sem importância ética', 'Sempre determinada pela lei', 'Apenas uma questão de etiqueta'], a:0}
+      // as 5 do texto
+      {q: 'Segundo o texto, a ética pode ser entendida como:', opts: ['Conjunto de leis jurídicas que regulam a sociedade.', 'Regras de convivência fixas e imutáveis.', 'Um ramo da filosofia que orienta as ações humanas em busca do bem comum.', 'Tradições e costumes específicos de cada cultura.'], a:2},
+      {q: 'Durante a explicação foi apresentada a diferença entre ética e moral. Qual alternativa traduz corretamente essa diferença?', opts: ['A moral é universal, e a ética varia conforme a sociedade.', 'A ética reflete criticamente sobre os costumes, enquanto a moral se refere às práticas e normas sociais.', 'A ética é prática, enquanto a moral é apenas teoria.', 'Ética e moral são sinônimos, sem distinção.'], a:1},
+      {q: 'De acordo com o texto, em quais áreas a ética é considerada essencial para garantir respeito, justiça e integridade?', opts: ['Medicina, jornalismo e direito.', 'História, filosofia e literatura.', 'Economia, engenharia e matemática.', 'Religião, arte e música.'], a:0},
+      {q: 'No exemplo da carteira perdida, o texto mostra que:', opts: ['A ética orienta a devolver a carteira, preservando a dignidade do outro.', 'A moral sempre leva as pessoas a devolverem a carteira.', 'A ética e a moral são iguais, logo qualquer decisão é correta.', 'A ética não interfere em escolhas do cotidiano.'], a:0},
+      {q: 'Segundo a conclusão do texto, qual é a relação entre escolhas cotidianas e a prática da ética?', opts: ['Cada escolha é irrelevante para a construção social.', 'As escolhas diárias mostram que a ética só vale em grandes decisões.', 'Cada escolha representa uma oportunidade de praticar a ética e construir uma sociedade mais justa.', 'As escolhas individuais não têm impacto na coletividade.'], a:2},
+
+      // +5 novas
+      {q: 'Qual a principal função da ética no convívio social?', opts: ['Evitar punições legais.', 'Guiar as ações humanas para uma convivência justa e respeitosa.', 'Garantir vantagens pessoais.', 'Impedir mudanças culturais.'], a:1},
+      {q: 'Por que a moral pode variar de cultura para cultura?', opts: ['Porque se baseia em costumes e tradições específicos de cada sociedade.', 'Porque é sempre universal.', 'Porque depende apenas da religião dominante.', 'Porque segue regras fixas e imutáveis.'], a:0},
+      {q: 'Segundo o texto, a ética nas profissões como medicina e jornalismo serve para:', opts: ['Substituir leis e regulamentos.', 'Aumentar a competição entre profissionais.', 'Estabelecer princípios que garantam integridade e respeito.', 'Definir salários e benefícios.'], a:2},
+      {q: 'No exemplo da carteira perdida, o que representa a escolha de devolver a carteira?', opts: ['Uma ação orientada por princípios éticos de justiça e responsabilidade.', 'Um ato de moralidade sem reflexão.', 'Um costume que varia entre culturas.', 'Uma obrigação legal imposta.'], a:0},
+      {q: 'De acordo com a conclusão, qual é o papel da consciência nas decisões éticas?', opts: ['É irrelevante, pois as regras já determinam tudo.', 'É central, pois ajuda a refletir e assumir responsabilidade pelas escolhas.', 'É apenas teórica, sem impacto na prática.', 'É usada apenas em situações de emergência.'], a:1},
     ];
 
     const prizes = [
-      'R$ 1.000', 'R$ 2.000', 'R$ 5.000', 'R$ 10.000', 'R$ 20.000', 'R$ 40.000', 'R$ 80.000', 'R$ 160.000', 'R$ 320.000', 'R$ 640.000', 'R$ 1.000.000'
+      'R$ 1.000', 'R$ 2.000', 'R$ 5.000', 'R$ 10.000', 'R$ 20.000', 'R$ 40.000', 'R$ 80.000', 'R$ 160.000', 'R$ 320.000', 'R$ 1.000.000'
     ];
 
     let idx = 0;
@@ -238,5 +304,6 @@
     function shuffleArray(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } }
 
     init();
-  </script></body>
+  </script>
+</body>
 </html>
